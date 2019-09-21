@@ -48,7 +48,68 @@
   </style>
 
   <script>
-  
+
+  //시작하자마자 실행되는 함수
+  $(document).ready(function(){
+    
+    //시작하자마자 데이터 가져오는 함수 실행!
+    listing();
+
+  });
+
+  function make_card(comment,desc,image,title,url){
+
+    // console.log(comment,desc,image,title,url);
+
+    let tempHtml = '<div class="card" style="height:50%;">\
+        <img class="card-img-top" src="'+image+'" alt="Card image cap" style="height:30%">\
+        <div class="card-body">\
+          <a href="'+url+'" class="card-title">'+title+'</a>\
+          <p class="card-text">'+desc+'</p>\
+          <p class="card-text comment">'+comment+'</p>\
+        </div>\
+      </div>';
+
+      $("#cards-box").append(tempHtml);
+
+
+  }
+
+  function listing(){
+    console.log("리스팅 함수가 실행되고 있습니다. ");
+    $.ajax({
+      type: "GET",
+      url: "http://spartacodingclub.shop/post?author_give=김건희",
+      data: {},
+      success: function(response){
+        // console.log(response);
+        if(response.result == 'success'){
+          // console.log(response.articles);
+          let articles = response.articles;
+          $("#cards-box").html('');
+
+
+
+          for(var i=0; i<articles.length; i++){
+            console.log(articles[i]);
+
+            let comment = articles[i].comment;
+            let desc = articles[i].desc;
+            let image = articles[i].image;
+            let title = articles[i].title;
+            let url = articles[i].url;
+
+            make_card(comment,desc,image,title,url);
+
+          }
+
+        }else{
+          alert("실패했습니다.")
+        }
+      }
+    })
+  }
+
   function openclose(){
     // id 값 posting-box의 display 값이 block 이면
     if ( $('#posting-box').css('display') == 'block' ) {
@@ -60,6 +121,38 @@
         $('#posting-box').show();
         $('#btn-posting-box').text('포스팅 박스 닫기');
     }
+  }
+
+  function posting() {
+    let url = $('#posting-url').val();
+    let comment = $('#posting-comment').val();
+    let author = '김건희';
+    let targetString = 'http://'; 
+
+    if(url.indexOf(targetString) == -1){
+      alert('http 규격을 맞춰서 작성해주세요!');
+      return false;
+    }
+
+    // 우리가 크롬 콘솔창에서 썼던 그 코드!
+    $.ajax({
+      type: "POST", // POST 방식으로 요청하겠다.
+      url: "http://spartacodingclub.shop/post", // /post라는 url에 요청하겠다.
+      data: { 
+        url_give: url, 
+        comment_give: comment, 
+        author_give:author 
+      }, // 데이터를 주는 방법
+      success: function(result){ // 성공하면
+        console.log(result); // 콘솔 창에 결과를 찍어주자
+         if (result['result'] == 'success') {
+          alert('포스팅 성공!');
+          location.reload(true);
+        } else {
+          alert('서버 오류!')
+        }
+      }
+    })
   }
 
 
@@ -90,61 +183,14 @@
         </div>
         <div class="form-group">
           <label for="exampleFormControlTextarea1">간단 코멘트</label>
-          <textarea class="form-control" rows="2"></textarea>
+          <textarea class="form-control" id="posting-comment" rows="2"></textarea>
         </div>
-        <button type="button" class="btn btn-primary" id="post-button" onclick="hey()">입력하고</button>
+        <button type="button" class="btn btn-primary" id="post-button" onclick="posting()">기사저장</button>
       </div>
     </div>
 
-    <div class="card-columns">
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
-        </div>
-      </div>
+    <div class="card-columns" id="cards-box">
+      
     </div>
   </div>
 
